@@ -2,18 +2,26 @@
 {% load static %}
 {%block title%} 홈{%endblock %} 
 {% block content %}
+{% for post in post_list%}
 <main>
     <div class="card-list">
         <div class="card">
             <div class="card__header">
                 <img src="http://via.placeholder.com/32x32" alt="프로필이미지">
                 <a href="#">
-                    <span class="card__user-name">likelion.official</span>
+                    <span class="card__user-name">{{post.writer}}</span>
                 </a>
             </div>
+            {% if request.user == post.writer%}
+            <a href="{% url 'posts:post-update' post.id %}">수정하기</a>
+            {% endif %}
             <div class="card__body">
                 <div>
-                    <img class="card__image" src="http://via.placeholder.com/600x600" alt="카드이미지">
+                    {% if post.image %}
+                        <img class="card__image" src="{{post.image.url}}" alt="카드이미지">
+                    {% else %}
+                        <img class="card__image" src="http://via.placeholder.com/600x600" alt="카드이미지">
+                    {%endif%}
                 </div>
                 <div class="card__btn-group">
                     <div>
@@ -28,13 +36,14 @@
                 <div class="card_content">
                     <span class="card__like-num">좋아요 00개</span>
                     <div class="card__main-text">
-                        <p><span class="card__user-name">likelion.official</span>{{"실무와 현업에서 필요로 하는 백엔드 개발자로의 역량 배양에 효과적"|truncatechars:35}} 더보기</p>
+                        <p><span class="card__user-name">{{post.writer}}</span>{{post.content}}
+                        <a href="{% url 'posts:post-detail' post.id %}">더보기</a>
                     </div>
                     <div>
                         <p>댓글 0개 모두 보기</p>
                         <ul class="card__comment-group">
                             <li>
-                                <p><span class="card__user-name">likelion.official</span>댓글 내용...</p>
+                                <p><span class="card__user-name"></span></p>
                             </li>
                         </ul>
                         <p class="card__created-at">2023년 5월 11일</p>
@@ -44,4 +53,5 @@
         </div>
     </div>
 </main>
+{%endfor%}
 {% endblock %}

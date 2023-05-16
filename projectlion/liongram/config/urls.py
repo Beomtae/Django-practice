@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.conf import settings
+from django.conf.urls.static import static
 from django.urls import include, path
 
 from posts.views import class_view, url_view,url_parameter_view,function_view,index
@@ -13,3 +15,5 @@ urlpatterns = [
     path('', index, name='index'),
     path('posts/', include('posts.urls', namespace='posts')),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
