@@ -13,6 +13,7 @@ urlpatterns = [
     path('cbv/', class_view.as_view(), name='cbv'),
     
     path('', index, name='index'),
+    path('accounts/', include('accounts.urls', namespace='accounts')),
     path('posts/', include('posts.urls', namespace='posts')),
 ]
 

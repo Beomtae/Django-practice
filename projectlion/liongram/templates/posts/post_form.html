@@ -6,8 +6,8 @@
     {% csrf_token %}
     <div>
         <label for="imageID">이미지</label>
-        {%if post.image%}
-        <p>현재: <a href="{{post.image.url}}">{{post.image}}</a></p>
+        {% if post.image %}
+        <p>현재: <a href="{{post.image.url}}">{{post.image.name}}</a></p>
         <p>변경: <input type="file" name="image" accept="image/" id="imageID"></p>
         {% else %}
         <input type="file" name="image" accept="image/" id="imageID">

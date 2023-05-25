@@ -5,11 +5,11 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="{% static 'css/reset.css' %}">
     <link rel="stylesheet" href="{% static 'css/index.css' %}">
-    <title>{%block title%} {%endblock %} | 라이언그램</title>
+    <title>{% block title %} {% endblock %} | 라이언그램</title>
 </head>
 <body class="container">
     <div>
-        {% block content%}
+        {% block content %}
         {% endblock %}
     </div>
     <div>
@@ -27,5 +27,14 @@
             </ul>
         </nav>
     </div>
+    {%if request.user.is_authenticated %}
+        <div>
+            {{user.username}}님 환영합니다.
+        </div>
+        <a href ="{% url 'accounts:logout' %}">로그아웃</a>
+    {% else %}
+        <a href ="{% url 'accounts:login' %}">로그인</a>
+        <a href ="{% url 'accounts:signup' %}">회원가입</a>
+    {% endif %}
 </body>
 </html>

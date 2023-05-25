@@ -2,11 +2,12 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpResponse
 from django.views.generic.list import ListView
 from django.contrib.auth.decorators import login_required
+from .forms import PostBaseForm, PostCreateForm
 
 from .models import Post
 
 def index(request):
-    post_list = Post.objects.all()
+    post_list = Post.objects.all().order_by('-created_at')
     #post_list = Post.objects.filter(writer=request.user)
     context = {
         'post_list':post_list
@@ -21,17 +22,38 @@ def post_list_view(request):
     }
     return render(request, 'posts/post_list.html', context)
 
+@login_required
 def post_create_view(request):
     if request.method =='GET':
         return render(request, 'posts/post_form.html')
     else:
         image = request.FILES.get('image')
         content = request.POST.get('content')
+        print(image)
+        print(content)
         Post.objects.create(
             image=image,
             content = content,
             writer=request.user
         )
+        return redirect('index')
+    
+def post_create_form_view(request):
+    if request.method =='GET':
+        form = PostCreateForm()
+        context = {'form':form}
+        return render(request, 'posts/post_form2.html',context)
+    else:
+        form = PostBaseForm(request.POST, request.FILES)
+
+        if form.is_valid(): #유효성 검사 true
+            Post.objects.create(
+                image=form.cleaned_data['image'],
+                content=form.cleaned_data['content'],
+                writer=request.user,
+            )
+        else: #유효성 검사 false
+            return redirect('posts:post_create')
         return redirect('index')
 
 def post_update_view(request,id):
@@ -52,12 +74,16 @@ def post_update_view(request,id):
         return redirect('post_detail',post.id)
 
 def post_detail_view(request, id):
-    post = Post.objects.get(id=id)
+    try:
+        post = Post.objects.get(id=id)
+    except Post.DoesNotExist:
+        return redirect('index')
     context = {
         'post':post
     }
     return render(request, 'posts/post_detail.html',context)
 
+@login_required
 def post_delete_view(request, id):
     post = get_object_or_404(Post, id=id)
     if request.method =='GET':
