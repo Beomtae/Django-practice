@@ -53,7 +53,7 @@ def post_create_form_view(request):
                 writer=request.user,
             )
         else: #유효성 검사 false
-            return redirect('posts:post_create')
+            return redirect('posts:post-create')
         return redirect('index')
 
 def post_update_view(request,id):
@@ -74,14 +74,17 @@ def post_update_view(request,id):
         return redirect('post_detail',post.id)
 
 def post_detail_view(request, id):
-    try:
-        post = Post.objects.get(id=id)
-    except Post.DoesNotExist:
-        return redirect('index')
-    context = {
-        'post':post
-    }
-    return render(request, 'posts/post_detail.html',context)
+    if request.user.is_authenticated: 
+        try:
+            post = Post.objects.get(id=id)
+        except Post.DoesNotExist:
+            return redirect('index')
+        context = {
+            'post':post
+        }
+        return render(request, 'posts/post_detail.html',context)
+    else:
+        return redirect('accounts:login')
 
 @login_required
 def post_delete_view(request, id):
